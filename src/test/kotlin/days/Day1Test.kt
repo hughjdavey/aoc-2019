@@ -1,4 +1,5 @@
-import days.Day1
+package days
+
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.Test

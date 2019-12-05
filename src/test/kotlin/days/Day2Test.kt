@@ -1,3 +1,5 @@
+package days
+
 import common.IntcodeComputer
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`

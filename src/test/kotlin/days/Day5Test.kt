@@ -1,12 +1,14 @@
+package days
+
 import common.IntcodeComputer
 import common.IntcodeComputer.Opcode
 import common.IntcodeComputer.ParameterMode
+import common.stackOf
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.collection.IsEmptyCollection.empty
 import org.hamcrest.collection.IsIterableContainingInOrder.contains
 import org.hamcrest.core.Is.`is`
 import org.junit.Test
-import java.util.Stack
 
 class Day5Test {
 
@@ -89,11 +91,5 @@ class Day5Test {
         assertThat(IntcodeComputer(
                 mutableListOf(3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99))
                 .runWithIO(stackOf(9)), contains(1001))
-    }
-
-    private fun stackOf(vararg input: Int): Stack<Int> {
-        val stack = Stack<Int>()
-        input.toList().reversed().forEach { stack.push(it) }
-        return stack
     }
 }

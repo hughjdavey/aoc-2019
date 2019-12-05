@@ -14,4 +14,4 @@ See [Bogdanp's Awesome Advent of Code](https://github.com/Bogdanp/awesome-advent
 
 * Navigate to top-level directory on the command line
 * Run `./gradlew test`
-* Run `./gradlew test --tests $TEST_CLASS` where `$TEST_CLASS` is a string name of a test class, e.g. 'Day4Test'
+* Run `./gradlew test --tests $TEST_CLASS` where `$TEST_CLASS` is a string name of a test class, including package, e.g. 'days.Day4Test'
