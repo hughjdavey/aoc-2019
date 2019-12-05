@@ -1,13 +1,20 @@
 package common
 
-class IntcodeComputer(val tape: MutableList<Int>, val noun: Int = tape[1], val verb: Int = tape[2]) {
+import java.util.Stack
+
+class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, verb: Int? = null) {
 
     private var head = 0
     private var halted = false
 
+    private lateinit var input: Stack<Int>
+    private val output = mutableListOf<Int>()
+
     init {
-        tape[1] = noun
-        tape[2] = verb
+        if (noun != null && verb != null) {
+            tape[1] = noun
+            tape[2] = verb
+        }
     }
 
     fun debug(): List<Int> {
@@ -19,16 +26,32 @@ class IntcodeComputer(val tape: MutableList<Int>, val noun: Int = tape[1], val v
 
     fun run(): Int = debug()[0]
 
+    fun runWithIO(input: Stack<Int>): List<Int> {
+        this.input = input
+        debug()
+        return output
+    }
+
     private fun advance() {
         val instruction = Instruction(tape[head].toString())
         when (instruction.opcode) {
-            Opcode.ADD -> tape[tape[head + 3]] = tape[tape[head + 1]] + tape[tape[head + 2]]
-            Opcode.MUL -> tape[tape[head + 3]] = tape[tape[head + 1]] * tape[tape[head + 2]]
-            Opcode.READ -> tape[tape[head + 1]] = System.console().readLine().toInt()
-            Opcode.WRITE -> println(tape[tape[head + 1]])
+            Opcode.ADD -> tape[tape[head + 3]] = instruction.getParam(1, tape, head) + instruction.getParam(2, tape, head)
+            Opcode.MUL -> tape[tape[head + 3]] = instruction.getParam(1, tape, head) * instruction.getParam(2, tape, head)
+            Opcode.LESS_THAN -> tape[tape[head + 3]] = if (instruction.getParam(1, tape, head) < instruction.getParam(2, tape, head)) 1 else 0
+            Opcode.EQUALS -> tape[tape[head + 3]] = if (instruction.getParam(1, tape, head) == instruction.getParam(2, tape, head)) 1 else 0
+
+            Opcode.READ -> tape[tape[head + 1]] = input.pop()
+            Opcode.WRITE -> output.add(instruction.getParam(1, tape, head))
+
+            Opcode.JUMP_TRUE -> head = if (instruction.getParam(1, tape, head) != 0) instruction.getParam(2, tape, head) else head + instruction.numberOfArgs() + 1
+            Opcode.JUMP_FALSE -> head = if (instruction.getParam(1, tape, head) == 0) instruction.getParam(2, tape, head) else head + instruction.numberOfArgs() + 1
+
             Opcode.HALT -> halted = true
         }
-        head += instruction.opcode.numberOfArgs() + 1
+
+        if (!instruction.modifiesInstructionPointer()) {
+            head += instruction.numberOfArgs() + 1
+        }
     }
 
     class Instruction(instruction: String) {
@@ -42,25 +65,33 @@ class IntcodeComputer(val tape: MutableList<Int>, val noun: Int = tape[1], val v
             }
             opcode = Opcode.fromValue(instruction.takeLast(2).toInt())
 
-            val modes = instruction.dropLast(2).reversed().takeLast(3).padEnd(opcode.numberOfArgs(), '0')
+            val modes = instruction.dropLast(2).reversed().takeLast(3).padEnd(numberOfArgs(), '0')
             parameterModes = modes.map { ParameterMode.fromValue(it.toString().toInt()) }
         }
-    }
 
-    enum class Opcode(val value: Int) {
-
-        ADD(1), MUL(2), READ(3), WRITE(4), HALT(99);
+        fun getParam(param: Int, tape: MutableList<Int>, head: Int): Int {
+            val paramMode = parameterModes[param - 1]
+            return if (paramMode == ParameterMode.IMMEDIATE) tape[head + param] else tape[tape[head + param]]
+        }
 
         fun numberOfArgs(): Int {
-            return when (this) {
-                ADD, MUL -> 3
-                READ, WRITE -> 1
+            return when (opcode) {
+                Opcode.ADD, Opcode.MUL, Opcode.LESS_THAN, Opcode.EQUALS -> 3
+                Opcode.JUMP_TRUE, Opcode.JUMP_FALSE -> 2
+                Opcode.READ, Opcode.WRITE -> 1
                 else -> 0
             }
         }
 
+        fun modifiesInstructionPointer() = opcode == Opcode.JUMP_TRUE || opcode == Opcode.JUMP_FALSE
+    }
+
+    enum class Opcode(val value: Int) {
+
+        ADD(1), MUL(2), READ(3), WRITE(4), JUMP_TRUE(5), JUMP_FALSE(6), LESS_THAN(7), EQUALS(8), HALT(99);
+
         companion object {
-            fun fromValue(value: Int): Opcode = values().find { it.value == value } ?: throw IllegalArgumentException()
+            fun fromValue(value: Int): Opcode = values().find { it.value == value } ?: throw IllegalArgumentException("Bad opcode: $value")
         }
     }
 
@@ -69,7 +100,7 @@ class IntcodeComputer(val tape: MutableList<Int>, val noun: Int = tape[1], val v
         POSITION(0), IMMEDIATE(1);
 
         companion object {
-            fun fromValue(value: Int): ParameterMode = values().find { it.value == value } ?: throw IllegalArgumentException()
+            fun fromValue(value: Int): ParameterMode = values().find { it.value == value } ?: throw IllegalArgumentException("Bad mode: $value")
         }
     }
 }
