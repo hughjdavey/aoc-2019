@@ -5,7 +5,10 @@ import java.util.Stack
 class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, verb: Int? = null) {
 
     private var head = 0
-    private var halted = false
+    var halted = false
+    var waiting = false
+
+    private fun canRun() = !halted && !waiting
 
     private lateinit var input: Stack<Int>
     private val output = mutableListOf<Int>()
@@ -18,7 +21,7 @@ class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, ver
     }
 
     fun debug(): List<Int> {
-        while (!halted) {
+        while (canRun()) {
             advance()
         }
         return tape
@@ -32,6 +35,11 @@ class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, ver
         return output
     }
 
+    fun restartWithIO(input: Int): List<Int> {
+        this.waiting = false
+        return runWithIO(stackOf(input))
+    }
+
     private fun advance() {
         val instruction = Instruction(tape[head].toString())
         when (instruction.opcode) {
@@ -40,7 +48,14 @@ class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, ver
             Opcode.LESS_THAN -> tape[tape[head + 3]] = if (instruction.getParam(1, tape, head) < instruction.getParam(2, tape, head)) 1 else 0
             Opcode.EQUALS -> tape[tape[head + 3]] = if (instruction.getParam(1, tape, head) == instruction.getParam(2, tape, head)) 1 else 0
 
-            Opcode.READ -> tape[tape[head + 1]] = input.pop()
+            Opcode.READ -> {
+                if (input.empty()) {
+                    this.waiting = true
+                }
+                else {
+                    tape[tape[head + 1]] = input.pop()
+                }
+            }
             Opcode.WRITE -> output.add(instruction.getParam(1, tape, head))
 
             Opcode.JUMP_TRUE -> head = if (instruction.getParam(1, tape, head) != 0) instruction.getParam(2, tape, head) else head + instruction.numberOfArgs() + 1
@@ -49,7 +64,7 @@ class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, ver
             Opcode.HALT -> halted = true
         }
 
-        if (!instruction.modifiesInstructionPointer()) {
+        if (!instruction.modifiesInstructionPointer() && canRun()) {
             head += instruction.numberOfArgs() + 1
         }
     }
