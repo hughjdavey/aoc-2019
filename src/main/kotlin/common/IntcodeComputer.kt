@@ -119,5 +119,3 @@ class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, ver
         }
     }
 }
-
-

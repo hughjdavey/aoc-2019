@@ -34,7 +34,6 @@ class CircularList<T>(vararg val elements: T) {
         if (elements.isEmpty()) {
             throw IllegalArgumentException("Array size must be greater than 0")
         }
-
         this.size = elements.size
     }
 
@@ -52,4 +51,3 @@ class CircularList<T>(vararg val elements: T) {
         return elements[head]
     }
 }
-
