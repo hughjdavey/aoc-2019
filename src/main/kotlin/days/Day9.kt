@@ -1,13 +1,17 @@
 package days
 
+import common.IntcodeComputer
+import common.stackOf
+
 class Day9 : Day(9) {
 
+    private val program = inputString.split(",").map { it.trim().toLong() }.toMutableList()
+
     override fun partOne(): Any {
-        return 0
+        return IntcodeComputer(program).runWithIO(stackOf(1)).last()
     }
 
     override fun partTwo(): Any {
-        return 0
+        return IntcodeComputer(program).runWithIO(stackOf(2)).last()
     }
-
 }
