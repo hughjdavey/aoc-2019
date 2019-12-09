@@ -47,49 +47,49 @@ class Day5Test {
 
     @Test
     fun testPartOnePrograms() {
-        assertThat(IntcodeComputer(mutableListOf(1002, 4, 3, 4, 33)).debug(), contains(1002, 4, 3, 4, 99))
-        assertThat(IntcodeComputer(mutableListOf(1101, 100, -1, 4, 0)).debug(), contains(1101, 100, -1, 4, 99))
+        assertThat(IntcodeComputer(mutableListOf(1002, 4, 3, 4, 33)).debug(), contains<Long>(1002, 4, 3, 4, 99))
+        assertThat(IntcodeComputer(mutableListOf(1101, 100, -1, 4, 0)).debug(), contains<Long>(1101, 100, -1, 4, 99))
     }
 
     @Test
     fun testPartTwoSamples() {
         // equal to 8; position mode
-        assertThat(IntcodeComputer(mutableListOf(3,9,8,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(4)), contains(0))
-        assertThat(IntcodeComputer(mutableListOf(3,9,8,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(8)), contains(1))
+        assertThat(IntcodeComputer(mutableListOf(3,9,8,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(4)), contains<Long>(0))
+        assertThat(IntcodeComputer(mutableListOf(3,9,8,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(8)), contains<Long>(1))
 
         // less than 8; position mode
-        assertThat(IntcodeComputer(mutableListOf(3,9,7,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(4)), contains(1))
-        assertThat(IntcodeComputer(mutableListOf(3,9,7,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(8)), contains(0))
-        assertThat(IntcodeComputer(mutableListOf(3,9,7,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(10)), contains(0))
+        assertThat(IntcodeComputer(mutableListOf(3,9,7,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(4)), contains<Long>(1))
+        assertThat(IntcodeComputer(mutableListOf(3,9,7,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(8)), contains<Long>(0))
+        assertThat(IntcodeComputer(mutableListOf(3,9,7,9,10,9,4,9,99,-1,8)).runWithIO(stackOf(10)), contains<Long>(0))
 
         // equal to 8; immediate mode
-        assertThat(IntcodeComputer(mutableListOf(3,3,1108,-1,8,3,4,3,99)).runWithIO(stackOf(4)), contains(0))
-        assertThat(IntcodeComputer(mutableListOf(3,3,1108,-1,8,3,4,3,99)).runWithIO(stackOf(8)), contains(1))
+        assertThat(IntcodeComputer(mutableListOf(3,3,1108,-1,8,3,4,3,99)).runWithIO(stackOf(4)), contains<Long>(0))
+        assertThat(IntcodeComputer(mutableListOf(3,3,1108,-1,8,3,4,3,99)).runWithIO(stackOf(8)), contains<Long>(1))
 
         // less than 8; position mode
-        assertThat(IntcodeComputer(mutableListOf(3,3,1107,-1,8,3,4,3,99)).runWithIO(stackOf(4)), contains(1))
-        assertThat(IntcodeComputer(mutableListOf(3,3,1107,-1,8,3,4,3,99)).runWithIO(stackOf(8)), contains(0))
-        assertThat(IntcodeComputer(mutableListOf(3,3,1107,-1,8,3,4,3,99)).runWithIO(stackOf(10)), contains(0))
+        assertThat(IntcodeComputer(mutableListOf(3,3,1107,-1,8,3,4,3,99)).runWithIO(stackOf(4)), contains<Long>(1))
+        assertThat(IntcodeComputer(mutableListOf(3,3,1107,-1,8,3,4,3,99)).runWithIO(stackOf(8)), contains<Long>(0))
+        assertThat(IntcodeComputer(mutableListOf(3,3,1107,-1,8,3,4,3,99)).runWithIO(stackOf(10)), contains<Long>(0))
 
         // jump 0 if 0 1 if not 0; position mode
-        assertThat(IntcodeComputer(mutableListOf(3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9)).runWithIO(stackOf(0)), contains(0))
-        assertThat(IntcodeComputer(mutableListOf(3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9)).runWithIO(stackOf(1)), contains(1))
+        assertThat(IntcodeComputer(mutableListOf(3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9)).runWithIO(stackOf(0)), contains<Long>(0))
+        assertThat(IntcodeComputer(mutableListOf(3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9)).runWithIO(stackOf(1)), contains<Long>(1))
 
         // jump 0 if 0 1 if not 0; immediate mode
-        assertThat(IntcodeComputer(mutableListOf(3,3,1105,-1,9,1101,0,0,12,4,12,99,1)).runWithIO(stackOf(0)), contains(0))
-        assertThat(IntcodeComputer(mutableListOf(3,3,1105,-1,9,1101,0,0,12,4,12,99,1)).runWithIO(stackOf(1)), contains(1))
+        assertThat(IntcodeComputer(mutableListOf(3,3,1105,-1,9,1101,0,0,12,4,12,99,1)).runWithIO(stackOf(0)), contains<Long>(0))
+        assertThat(IntcodeComputer(mutableListOf(3,3,1105,-1,9,1101,0,0,12,4,12,99,1)).runWithIO(stackOf(1)), contains<Long>(1))
 
         // larger program
         assertThat(IntcodeComputer(
                 mutableListOf(3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99))
-                .runWithIO(stackOf(7)), contains(999))
+                .runWithIO(stackOf(7)), contains<Long>(999))
 
         assertThat(IntcodeComputer(
                 mutableListOf(3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99))
-                .runWithIO(stackOf(8)), contains(1000))
+                .runWithIO(stackOf(8)), contains<Long>(1000))
 
         assertThat(IntcodeComputer(
                 mutableListOf(3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99))
-                .runWithIO(stackOf(9)), contains(1001))
+                .runWithIO(stackOf(9)), contains<Long>(1001))
     }
 }

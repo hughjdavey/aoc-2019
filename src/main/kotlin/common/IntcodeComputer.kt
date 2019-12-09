@@ -2,7 +2,7 @@ package common
 
 import java.util.Stack
 
-class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, verb: Int? = null) {
+class IntcodeComputer(private val tape: MutableList<Long>, noun: Long? = null, verb: Long? = null) {
 
     private var head = 0
     var halted = false
@@ -10,8 +10,8 @@ class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, ver
 
     private fun canRun() = !halted && !waiting
 
-    private lateinit var input: Stack<Int>
-    private val output = mutableListOf<Int>()
+    private lateinit var input: Stack<Long>
+    private val output = mutableListOf<Long>()
 
     init {
         if (noun != null && verb != null) {
@@ -20,22 +20,22 @@ class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, ver
         }
     }
 
-    fun debug(): List<Int> {
+    fun debug(): List<Long> {
         while (canRun()) {
             advance()
         }
         return tape
     }
 
-    fun run(): Int = debug()[0]
+    fun run(): Long = debug()[0]
 
-    fun runWithIO(input: Stack<Int>): List<Int> {
+    fun runWithIO(input: Stack<Long>): List<Long> {
         this.input = input
         debug()
         return output
     }
 
-    fun restartWithIO(input: Int): List<Int> {
+    fun restartWithIO(input: Long): List<Long> {
         this.waiting = false
         return runWithIO(stackOf(input))
     }
@@ -43,23 +43,23 @@ class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, ver
     private fun advance() {
         val instruction = Instruction(tape[head].toString())
         when (instruction.opcode) {
-            Opcode.ADD -> tape[tape[head + 3]] = instruction.getParam(1, tape, head) + instruction.getParam(2, tape, head)
-            Opcode.MUL -> tape[tape[head + 3]] = instruction.getParam(1, tape, head) * instruction.getParam(2, tape, head)
-            Opcode.LESS_THAN -> tape[tape[head + 3]] = if (instruction.getParam(1, tape, head) < instruction.getParam(2, tape, head)) 1 else 0
-            Opcode.EQUALS -> tape[tape[head + 3]] = if (instruction.getParam(1, tape, head) == instruction.getParam(2, tape, head)) 1 else 0
+            Opcode.ADD -> tape[tape[head + 3].toInt()] = instruction.getParam(1, tape, head) + instruction.getParam(2, tape, head)
+            Opcode.MUL -> tape[tape[head + 3].toInt()] = instruction.getParam(1, tape, head) * instruction.getParam(2, tape, head)
+            Opcode.LESS_THAN -> tape[tape[head + 3].toInt()] = if (instruction.getParam(1, tape, head) < instruction.getParam(2, tape, head)) 1 else 0
+            Opcode.EQUALS -> tape[tape[head + 3].toInt()] = if (instruction.getParam(1, tape, head) == instruction.getParam(2, tape, head)) 1 else 0
 
             Opcode.READ -> {
                 if (input.empty()) {
                     this.waiting = true
                 }
                 else {
-                    tape[tape[head + 1]] = input.pop()
+                    tape[tape[head + 1].toInt()] = input.pop()
                 }
             }
             Opcode.WRITE -> output.add(instruction.getParam(1, tape, head))
 
-            Opcode.JUMP_TRUE -> head = if (instruction.getParam(1, tape, head) != 0) instruction.getParam(2, tape, head) else head + instruction.numberOfArgs() + 1
-            Opcode.JUMP_FALSE -> head = if (instruction.getParam(1, tape, head) == 0) instruction.getParam(2, tape, head) else head + instruction.numberOfArgs() + 1
+            Opcode.JUMP_TRUE -> head = if (instruction.getParam(1, tape, head) != 0L) instruction.getParam(2, tape, head).toInt() else head + instruction.numberOfArgs() + 1
+            Opcode.JUMP_FALSE -> head = if (instruction.getParam(1, tape, head) == 0L) instruction.getParam(2, tape, head).toInt() else head + instruction.numberOfArgs() + 1
 
             Opcode.HALT -> halted = true
         }
@@ -84,9 +84,9 @@ class IntcodeComputer(private val tape: MutableList<Int>, noun: Int? = null, ver
             parameterModes = modes.map { ParameterMode.fromValue(it.toString().toInt()) }
         }
 
-        fun getParam(param: Int, tape: MutableList<Int>, head: Int): Int {
+        fun getParam(param: Int, tape: MutableList<Long>, head: Int): Long {
             val paramMode = parameterModes[param - 1]
-            return if (paramMode == ParameterMode.IMMEDIATE) tape[head + param] else tape[tape[head + param]]
+            return if (paramMode == ParameterMode.IMMEDIATE) tape[head + param] else tape[tape[head + param].toInt()]
         }
 
         fun numberOfArgs(): Int {
