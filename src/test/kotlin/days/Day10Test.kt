@@ -116,4 +116,68 @@ class Day10Test {
         assertThat(ex4.bestLocationForMonitoring(), `is`(11 to 13))
         assertThat(ex4.numberCanDetect(11, 13), `is`(210))
     }
+
+    @Test
+    fun testDistance() {
+        assertThat(Day10.AsteroidGrid.distance(8 to 3, 8 to 1), `is`(2))
+        assertThat(Day10.AsteroidGrid.distance(8 to 3, 8 to 0), `is`(3))
+        assertThat(Day10.AsteroidGrid.distance(8 to 1, 8 to 3), `is`(2))
+        assertThat(Day10.AsteroidGrid.distance(8 to 0, 8 to 3), `is`(3))
+    }
+
+    @Test
+    fun testVaporization() {
+        val grid = Day10.AsteroidGrid(listOf(
+                ".#....#####...#..",
+                "##...##.#####..##",
+                "##...#...#.#####.",
+                "..#.....#...###..",
+                "..#.#.....#....##"
+        ))
+
+        assertThat(grid.bestLocationForMonitoring(), `is`(8 to 3))
+        assertThat(grid.vaporizedNth(9), `is`(15 to 1))
+        assertThat(grid.vaporizedNth(10), `is`(12 to 2))
+        assertThat(grid.vaporizedNth(14), `is`(12 to 3))
+        assertThat(grid.vaporizedNth(19), `is`(2 to 4))
+    }
+
+    @Test
+    fun testVaporizationBigGrid() {
+        val grid = Day10.AsteroidGrid(listOf(
+                ".#..##.###...#######",
+                "##.############..##.",
+                ".#.######.########.#",
+                ".###.#######.####.#.",
+                "#####.##.#.##.###.##",
+                "..#####..#.#########",
+                "####################",
+                "#.####....###.#.#.##",
+                "##.#################",
+                "#####.##.###..####..",
+                "..######..##.#######",
+                "####.##.####...##..#",
+                ".#####..#.######.###",
+                "##...#.##########...",
+                "#.##########.#######",
+                ".####.#.###.###.#.##",
+                "....##.##.###..#####",
+                ".#.#.###########.###",
+                "#.#.#.#####.####.###",
+                "###.##.####.##.#..##"
+        ))
+        assertThat(grid.bestLocationForMonitoring(), `is`(11 to 13))
+
+        assertThat(grid.vaporizedNth(1), `is`(11 to 12))
+        assertThat(grid.vaporizedNth(2), `is`(12 to 1))
+        assertThat(grid.vaporizedNth(3), `is`(12 to 2))
+        assertThat(grid.vaporizedNth(10), `is`(12 to 8))
+        assertThat(grid.vaporizedNth(20), `is`(16 to 0))
+        assertThat(grid.vaporizedNth(50), `is`(16 to 9))
+        assertThat(grid.vaporizedNth(100), `is`(10 to 16))
+        assertThat(grid.vaporizedNth(199), `is`(9 to 6))
+        assertThat(grid.vaporizedNth(200), `is`(8 to 2))
+        assertThat(grid.vaporizedNth(201), `is`(10 to 9))
+        assertThat(grid.vaporizedNth(299), `is`(11 to 1))
+    }
 }
