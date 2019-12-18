@@ -62,7 +62,7 @@ class Day13 : Day(13) {
                     else -> 0L
                 }
 
-                tiles = toTiles(computer.restartWithIO(joystickInput))
+                tiles = toTiles(computer.runWithIO(joystickInput))
             }
             return tiles.findLast { it.tileType == TileType.SCORE }!!.tileId
         }

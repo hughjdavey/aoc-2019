@@ -35,7 +35,7 @@ class Day7 : Day(7) {
         fun getOutput(input: Long): Long {
             val output = when {
                 computer.waiting -> {
-                    computer.restartWithIO(input)
+                    computer.runWithIO(input)
                 }
                 else -> {
                     computer.runWithIO(stackOf(phaseSetting, input))

@@ -63,16 +63,16 @@ class Day15 : Day(15) {
 
         fun possibleDirections(): List<Direction> {
             return Direction.all().filter {
-                val status = computer.restartWithIO(it.direction).last()
+                val status = computer.runWithIO(it.direction).last()
                 if (status == 0L) false else {
-                    computer.restartWithIO(it.reverse)
+                    computer.runWithIO(it.reverse)
                     true
                 }
             }.filter { visited.find { vis -> it.update(location) == vis.coord } == null }
         }
 
         private fun move(direction: Direction) {
-            val status = computer.restartWithIO(direction.direction).last()
+            val status = computer.runWithIO(direction.direction).last()
             location = direction.update(location)
             distanceTravelled += 1
             position = Visited(location, status.toInt(), distanceTravelled).also { visited.add(it) }

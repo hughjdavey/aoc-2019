@@ -51,3 +51,19 @@ class CircularList<T>(vararg val elements: T) {
         return elements[head]
     }
 }
+
+// taken from https://youtrack.jetbrains.com/issue/KT-7657
+fun <R, T> Sequence<T>.scan(seed: R, transform: (a: R, b: T) -> R): Sequence<R> = object : Sequence<R> {
+    override fun iterator(): Iterator<R> = object : Iterator<R> {
+        val it = this@scan.iterator()
+        var last: R = seed
+        var first = true
+
+        override fun next(): R {
+            if (first) first = false else last = transform(last, it.next())
+            return last
+        }
+
+        override fun hasNext(): Boolean = it.hasNext()
+    }
+}

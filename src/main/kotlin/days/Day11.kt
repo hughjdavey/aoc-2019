@@ -63,7 +63,7 @@ class Day11 : Day(11) {
 
                 // run computer for next loop
                 val newInput = if (visited.last().colour == '.') 0L else 1L
-                out = computer.restartWithIO(newInput).takeLast(2)
+                out = computer.runWithIO(newInput).takeLast(2)
             }
         }
 

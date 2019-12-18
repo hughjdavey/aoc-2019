@@ -32,14 +32,14 @@ class IntcodeComputer(private val tape: MutableList<Long>, noun: Long? = null, v
     fun run(): Long = debug()[0]
 
     fun runWithIO(input: Stack<Long>): List<Long> {
+        this.waiting = false
         this.input = input
         debug()
         return output
     }
 
-    fun restartWithIO(input: Long): List<Long> {
-        this.waiting = false
-        return runWithIO(stackOf(input))
+    fun runWithIO(input: Long): List<Long> {
+        return this.runWithIO(stackOf(input))
     }
 
     private fun advance() {
